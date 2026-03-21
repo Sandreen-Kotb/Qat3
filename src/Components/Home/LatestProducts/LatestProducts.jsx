@@ -1,32 +1,68 @@
-import { FaCircle } from "react-icons/fa6";
 import { latestProducts } from "../../../assets/data";
+import { NavLink } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { singleProduct } from "../../../features/products/productSlice";
 
 export const LatestProducts = () => {
+    const dispatch = useDispatch();
 
     return (
-        <div>
-            <h2 data-aos='fade-down' className="main-title">Latest Products</h2>
-            <div className="container text-center">
-                <div className="products flex justify-center md:justify-around flex-wrap">
+        <div className="py-24 bg-white font-cairo">
+            <h2 data-aos='fade-up' className="main-title mb-16 px-4">Latest Arrivals</h2>
+            <div className="container mx-auto px-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
                     {latestProducts.map((product, index) => {
                         return (
-                            <div key={index} data-aos='flip-down' className="product mt-14 w-[70%] md:w-[45%] lg:w-[22%] min-w-60 py-2 px-3 border border-main-darker rounded-3xl cursor-pointer shadow-2xl my-[15px] mx-0 duration-300 ease-in-out relative hover:scale-105">
-                                <div className="w-[70%] mx-auto my-auto">
-                                    <img className="w-full rounded-2xl" src={product.img} alt="" />
+                            <NavLink 
+                                to={`/single-product/${product.id}`}
+                                key={index} 
+                                onClick={() => dispatch(singleProduct(product.id))}
+                                data-aos='fade-up' 
+                                data-aos-delay={index * 100}
+                                className="group relative bg-white border border-bg-secondary-color/30 rounded-[2.5rem] p-6 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 cursor-pointer"
+                            >
+                                {/* Badge */}
+                                {index % 3 === 0 && (
+                                    <span className="absolute top-6 left-6 z-10 bg-amber text-main-darker text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-sm">
+                                        Nouveau
+                                    </span>
+                                )}
+
+                                <div className="aspect-square mb-6 overflow-hidden rounded-[2rem] bg-bg-color flex items-center justify-center p-4">
+                                    <img 
+                                        className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" 
+                                        src={product.img} 
+                                        alt={product.name} 
+                                    />
                                 </div>
-                                <div className="info text-start py-[10px]">
-                                    <span className="font-normal text-[14px] " >{product.brand}</span>
-                                    <h5 className="pt-2.5 text-[18px] text-[#222] font-black">{product.name}</h5>
-                                    <div className="colors pt-2.5 flex">
-                                        {product.color.map((color, index) => {
-                                            return (
-                                                <i key={index} className="pr-3">{<FaCircle color={color} size={18} />}</i>
-                                            )
-                                        })}
+
+                                <div className="space-y-3">
+                                    <span className="text-[10px] font-bold text-secondary uppercase tracking-[0.2em]" >{product.brand}</span>
+                                    <h5 className="text-xl font-bold text-main-darker group-hover:text-amber transition-colors duration-300 truncate">
+                                        {product.name}
+                                    </h5>
+                                    
+                                    <div className="flex gap-2">
+                                        {product.color.map((color, idx) => (
+                                            <div 
+                                                key={idx} 
+                                                className="w-3 h-3 rounded-full border border-black/10 shadow-inner" 
+                                                style={{ backgroundColor: color }}
+                                                title={color}
+                                            />
+                                        ))}
                                     </div>
-                                    <h4 className="pt-2.5 text-main-darker text-[16px] font-black">{product.price}</h4>
+
+                                    <div className="pt-2 flex items-center justify-between">
+                                        <h4 className="text-xl font-black text-main-darker">
+                                            {product.price} <span className="text-xs font-medium text-secondary">EGP</span>
+                                        </h4>
+                                        <div className="w-10 h-10 rounded-full bg-main-darker text-white flex items-center justify-center transform scale-0 group-hover:scale-100 transition-transform duration-300 hover:bg-amber hover:text-main-darker shadow-lg">
+                                            <span className="text-xl">+</span>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </NavLink>
                         )
                     })}
                 </div>

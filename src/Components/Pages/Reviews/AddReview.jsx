@@ -5,13 +5,9 @@ import { reviewAdded } from '../../../features/reviews/reviewSlice';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-
 const AddReview = () => {
-
     const { user } = useUser();
-
     const dispatch = useDispatch()
-
     const [reviewText, setReviewText] = useState('');
 
     const onReviewTextChange = e => setReviewText(e.target.value)
@@ -26,28 +22,59 @@ const AddReview = () => {
     }
 
     const canPost = Boolean(reviewText);
-
-    const notify = () => toast.success("Thanks For Your Review");
+    const notify = () => toast.success("Thanks for your feedback! 🌟");
 
     return (
-        <>
-            <ToastContainer position="bottom-right" color="#3b4356" />
-            <section className='my-16 flex flex-col justify-center items-center gap-y-5'>
-                <h2 data-aos='fade-down' className='font-bold text-[30px] w-fit mx-auto mt-24 mb-[50px] relative'>Hello, <span className='text-main'>{user.firstName}</span></h2>
-                <form data-aos='fade-up' className='flex flex-col justify-center items-center gap-y-5'>
-                    <textarea className='mb-5 outline-none border border-main-darker resize-none w-[200px] h-[200px] md:w-[400px] md:h-[250px] p-5 leading-5'
-                        id="reviewText"
-                        name="reviewText"
-                        value={reviewText}
-                        onChange={onReviewTextChange}
-                    />
-                    <button className='second-btn cursor-pointer'
-                        type="button" onClick={() => { onPostBtnClicked(); notify(); }} disabled={!canPost}
-                    >Post Review</button>
+        <div className="max-w-4xl mx-auto">
+            <ToastContainer position="bottom-right" />
+            <div 
+                data-aos="zoom-in"
+                className="bg-white rounded-[3rem] shadow-2xl p-10 md:p-16 border border-bg-secondary-color/20 relative"
+            >
+                {/* Decorative element */}
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-amber text-main-darker font-black py-2 px-8 rounded-full shadow-lg uppercase tracking-widest text-xs">
+                    Share Your Thoughts
+                </div>
+
+                <div className="text-center mb-10">
+                    <h2 className="text-3xl md:text-4xl font-playfair font-black text-main-darker mb-4">
+                        Hello, <span className="text-amber">{user.firstName}!</span>
+                    </h2>
+                    <p className="text-secondary font-medium">How was your experience with Qat3 products?</p>
+                </div>
+
+                <form className="flex flex-col items-center gap-8">
+                    <div className="w-full relative group">
+                        <textarea 
+                            className="w-full h-40 md:h-52 p-8 text-main-darker bg-bg-color rounded-3xl outline-none border-2 border-transparent focus:border-amber/30 focus:bg-white transition-all duration-300 resize-none font-medium leading-relaxed shadow-inner"
+                            id="reviewText"
+                            name="reviewText"
+                            placeholder="Tell us what you think..."
+                            value={reviewText}
+                            onChange={onReviewTextChange}
+                        />
+                        <div className="absolute bottom-4 right-6 text-[10px] font-bold text-secondary/40 uppercase tracking-widest pointer-events-none">
+                            Your words matter
+                        </div>
+                    </div>
+
+                    <button 
+                        className={`group relative inline-flex items-center justify-center px-12 py-4 font-black transition-all duration-300 rounded-2xl overflow-hidden shadow-xl ${
+                            canPost 
+                            ? 'bg-main-darker text-white hover:bg-amber hover:text-main-darker transform hover:-translate-y-1 active:scale-95' 
+                            : 'bg-bg-secondary-color text-secondary/50 cursor-not-allowed'
+                        }`}
+                        type="button" 
+                        onClick={() => { onPostBtnClicked(); notify(); }} 
+                        disabled={!canPost}
+                    >
+                        <span className="relative z-10">Post Your Review</span>
+                        <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
+                    </button>
                 </form>
-            </section>
-        </>
+            </div>
+        </div>
     )
 }
 
-export default AddReview
+export default AddReview

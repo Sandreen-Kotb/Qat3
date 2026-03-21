@@ -1,5 +1,5 @@
 import Home from "./Components/Home/Home";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Register from "./Components/AuthPages/Register/Register";
 import Login from "./Components/AuthPages/Login/Login";
 import About from "./Components/Pages/About/About";
@@ -16,11 +16,12 @@ import Bye from "./Components/AuthPages/Bye/Bye";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useEffect } from 'react';
-import ScrollButton from "./Components/Home/ScrollButton/ScrollButton ";
-import { SignedIn, SignedOut } from "@clerk/clerk-react";
-
+import ScrollButton from "./Components/Home/ScrollButton/ScrollButton";
+import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-react";
 
 export default function App() {
+  const { isLoaded } = useAuth();
+
   useEffect(() => {
     AOS.init({
       duration: 1500,
@@ -30,40 +31,45 @@ export default function App() {
     })
   }, []);
 
+  if (!isLoaded) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-bg-color">
+        <div className="w-16 h-16 border-4 border-amber border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
-
-    <div>
+    <div className="min-h-screen bg-bg-color selection:bg-amber/30 selection:text-main-darker">
       <SignedOut>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<IntroPage />}></Route>
-            <Route path="/sign-up" element={<Register />}></Route>
-            <Route path="/sign-in" element={<Login />}></Route>
-            <Route path="/bye" element={<Bye />}></Route>
-          </Routes>
-        </BrowserRouter>
+        <Routes>
+          <Route path="/" element={<IntroPage />} />
+          <Route path="/sign-up/*" element={<Register />} />
+          <Route path="/sign-in/*" element={<Login />} />
+          <Route path="/bye" element={<Bye />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </SignedOut>
 
       <SignedIn>
-        <BrowserRouter>
-          <Navbar />
+        <Navbar />
+        <main className="pt-10">
           <Routes>
-            <Route path="/" element={<Home />}></Route>
-            <Route path="/about" element={<About />}></Route>
-            <Route path="/shop" element={<Shop />}></Route>
-            <Route path="/reviews" element={<Reviews />}></Route>
-            <Route path="/contact" element={<Contact />}></Route>
-            <Route path="/cart" element={<Cart />}></Route>
-            <Route path="/single-product/:id" element={<SingleProduct />}></Route>
-            <Route path="/bye" element={<Bye />}></Route>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/shop" element={<Shop />} />
+            <Route path="/reviews" element={<Reviews />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/single-product/:id" element={<SingleProduct />} />
+            <Route path="/bye" element={<Bye />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-          <Newsletters />
-          <Footer />
-          <ScrollButton />
-        </BrowserRouter>
+        </main>
+        <Newsletters />
+        <Footer />
+        <ScrollButton />
       </SignedIn>
-
-    </div >
+    </div>
   );
 }
