@@ -4,56 +4,55 @@ import { products } from '../../assets/data';
 const productSlice = createSlice({
     name: "products",
     initialState: {
-        filteredProducts: JSON.parse(sessionStorage.getItem('filterData')),
-        SingleProduct: JSON.parse(sessionStorage.getItem('singleProduct')) || products,
+        filteredProducts: JSON.parse(sessionStorage.getItem('filterData')) || [],
+        SingleProduct: JSON.parse(sessionStorage.getItem('singleProduct')) || null,
         filterOn: false,
         error: false
     },
     reducers: {
         filterProduct(state, action) {
+            const query = action.payload.toLowerCase();
 
-            if (action.payload.toLowerCase() === "all categories") {
-
+            if (query === "all categories") {
                 state.filterOn = false;
-
+                state.error = false;
+                sessionStorage.removeItem('filterData');
             } else {
-
                 try {
-
-                    const filter = products.filter((product) => product.category.toLowerCase() === action.payload.toLowerCase())
+                    const filter = products.filter((product) => 
+                        product.category.toLowerCase().includes(query) ||
+                        product.name.toLowerCase().includes(query) ||
+                        product.brand.toLowerCase().includes(query) ||
+                        product.text.toLowerCase().includes(query)
+                    );
 
                     state.filteredProducts = filter;
-
-                    const saveState = JSON.stringify(filter);
-
-                    sessionStorage.setItem('filterData', saveState)
-
                     state.filterOn = true;
+                    state.error = filter.length === 0;
 
-                    state.error = false;
-
+                    if (filter.length > 0) {
+                        sessionStorage.setItem('filterData', JSON.stringify(filter));
+                    } else {
+                        sessionStorage.removeItem('filterData');
+                    }
                 } catch (err) {
-
+                    state.error = true;
                     return err;
-
                 }
-
             }
-
-
         },
         singleProduct(state, action) {
             try {
                 const oneProduct = products.filter((product) => product.id === action.payload)
-
-                state.SingleProduct = oneProduct;
-
-                const saveState = JSON.stringify(oneProduct);
-
-                sessionStorage.setItem('singleProduct', saveState)
-
+                if (oneProduct.length > 0) {
+                    state.SingleProduct = oneProduct;
+                    state.error = false;
+                    sessionStorage.setItem('singleProduct', JSON.stringify(oneProduct))
+                } else {
+                    state.error = true;
+                }
             } catch (error) {
-                return error;
+                state.error = true;
             }
         }
     }

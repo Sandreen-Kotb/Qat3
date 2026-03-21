@@ -25,36 +25,27 @@ const cartSlice = createSlice({
                 const exist = state.cart.find((product) => product.id === addedProduct.id)
 
                 if (exist) {
-
-                    exist.amount++;
-
-                    exist.totalPrice += addedProduct.price;
-
-                    state.totalAmount++;
-
-                    state.totalPrice += addedProduct.totalPrice;
-
+                    const quantityToAdd = addedProduct.amount || 1;
+                    exist.amount += quantityToAdd;
+                    exist.totalPrice += addedProduct.price * quantityToAdd;
+                    state.totalAmount += quantityToAdd;
+                    state.totalPrice += addedProduct.price * quantityToAdd;
                     updateData(state.cart, state.totalAmount, state.totalPrice)
-
                 } else {
-
+                    const quantityToAdd = addedProduct.amount || 1;
                     state.cart.push({
                         id: addedProduct.id,
                         price: addedProduct.price,
-                        amount: 1,
-                        totalPrice: addedProduct.price,
+                        amount: quantityToAdd,
+                        totalPrice: addedProduct.price * quantityToAdd,
                         name: addedProduct.name,
                         color: addedProduct.color,
                         img: addedProduct.img,
                         text: addedProduct.text
                     })
-
-                    state.totalAmount++;
-
-                    state.totalPrice += addedProduct.price;
-
+                    state.totalAmount += quantityToAdd;
+                    state.totalPrice += addedProduct.price * quantityToAdd;
                     updateData(state.cart, state.totalAmount, state.totalPrice)
-
                 }
 
             } catch (error) {
@@ -63,44 +54,42 @@ const cartSlice = createSlice({
 
         },
         removeFromCart: (state, action) => {
-
-            const removedProduct = action.payload
-
+            const removedProduct = action.payload;
             try {
-
-                const exist = state.cart.find((product) => product.id === removedProduct.id)
-
-                if (exist.amount === 1) {
-
+                const exist = state.cart.find((product) => product.id === removedProduct.id);
+                if (exist) {
                     state.cart = state.cart.filter((product) => product.id !== removedProduct.id);
-
-                    state.totalAmount--;
-
-                    state.totalPrice -= removedProduct.price;
-
-                    updateData(state.cart, state.totalAmount, state.totalPrice)
-
-                } else {
-
-                    exist.amount--;
-
-                    exist.totalPrice -= removedProduct.price;
-
-                    state.totalAmount--;
-
-                    state.totalPrice -= removedProduct.price;
-
-                    updateData(state.cart, state.totalAmount, state.totalPrice)
-
+                    state.totalAmount -= exist.amount;
+                    state.totalPrice -= exist.totalPrice;
+                    updateData(state.cart, state.totalAmount, state.totalPrice);
                 }
             } catch (error) {
                 return error;
             }
-
+        },
+        incrementQuantity: (state, action) => {
+            const product = state.cart.find((item) => item.id === action.payload.id);
+            if (product) {
+                product.amount++;
+                product.totalPrice += product.price;
+                state.totalAmount++;
+                state.totalPrice += product.price;
+                updateData(state.cart, state.totalAmount, state.totalPrice);
+            }
+        },
+        decrementQuantity: (state, action) => {
+            const product = state.cart.find((item) => item.id === action.payload.id);
+            if (product && product.amount > 1) {
+                product.amount--;
+                product.totalPrice -= product.price;
+                state.totalAmount--;
+                state.totalPrice -= product.price;
+                updateData(state.cart, state.totalAmount, state.totalPrice);
+            }
         }
     }
 });
 
-export const { addToCart, removeFromCart } = cartSlice.actions;
+export const { addToCart, removeFromCart, incrementQuantity, decrementQuantity } = cartSlice.actions;
 
 export default cartSlice.reducer;

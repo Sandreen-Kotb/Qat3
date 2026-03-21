@@ -4,11 +4,9 @@ const mainSlice = createSlice({
     name: 'main',
     initialState: {},
     reducers: {
-        scrollToTop() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth',
-            });
+        scrollToTop(state) {
+            // side effect removed to maintain reducer purity
+            // components will call window.scrollTo separately
         },
     }
 })

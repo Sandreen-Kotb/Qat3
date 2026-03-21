@@ -4,8 +4,8 @@ const SignUpPage = () => {
 
 
   return (
-    <div data-aos='flip-right' data-delay='500' data-aos-offset='100' className="h-screen  flex justify-center items-center">
-      <SignUp path="/sign-up" />
+    <div className="min-h-screen flex justify-center items-center p-6 bg-bg-color">
+      <SignUp path="/sign-up" routing="path" signInUrl="/sign-in" />
     </div>
   )
 }
