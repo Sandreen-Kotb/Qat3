@@ -1,20 +1,57 @@
+import { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 import "./Newsletters.css"
 
 export const Newsletters = () => {
+    const [email, setEmail] = useState("");
+
+    const handleSignup = (e) => {
+        e.preventDefault();
+        if (email) {
+            toast.success("Subscribed successfully! 📩");
+            setEmail("");
+        } else {
+            toast.error("Please enter a valid email address.");
+        }
+    };
+
     return (
-        <div>
-            <div className="mt-[40px] py-[40px] px-[20px] mx-0 md:py-[60px] md:px-[80px] flex justify-between flex-wrap items-center bg-[#222]" id="newsletter">
-                <div data-aos="zoom-in" data-aos-delay='200'>
-                    <h4 className="text-[22px] font-[700] text-white">Sign Up For Newsletters</h4>
-                    <p className="text-[14px] font-[600] text-secondary">Get E-mail Updates About Our<span className="text-main"> Latest Shop & Special
-                        Offers</span></p>
+        <div className="bg-main-darker py-20 px-6 overflow-hidden relative" id="newsletter">
+            {/* Background design */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-amber/5 rounded-full -mr-32 -mt-32"></div>
+
+            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-center gap-12 relative z-10">
+                <div data-aos="fade-right" className="text-center lg:text-left">
+                    <h4 className="text-3xl md:text-4xl font-playfair font-black text-white mb-4">
+                        Join Our <span className="text-amber">Newsletter</span>
+                    </h4>
+                    <p className="text-secondary-color text-lg font-medium opacity-80">
+                        Get e-mail updates about our <span className="text-white italic">latest shop & special offers.</span>
+                    </p>
                 </div>
-                <div data-aos="zoom-in" data-aos-delay='200' className="flex w-full lg:w-[40%] md:w-[70%]">
-                    <input className="h-[50px] py-0 px-[20px] text-[14px] w-full outline-none mt-3 lg:mt-0"
-                        type="text" placeholder="Your Email Address" />
-                    <button className="bg-main text-white whitespace-nowrap px-4 mt-3 lg:mt-0">Sign Up</button>
-                </div>
+                
+                <form 
+                    onSubmit={handleSignup}
+                    data-aos="fade-left" 
+                    className="flex flex-col sm:flex-row w-full lg:w-auto gap-4"
+                >
+                    <input 
+                        className="h-14 py-2 px-6 rounded-xl text-main-darker bg-white/95 focus:bg-white focus:ring-4 focus:ring-amber/30 transition-all outline-none min-w-[300px]"
+                        type="email" 
+                        placeholder="Your Email Address" 
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+                    <button 
+                        type="submit"
+                        className="h-14 bg-amber hover:bg-amber-dark text-main-darker font-bold px-10 rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 whitespace-nowrap"
+                    >
+                        Sign Up Now
+                    </button>
+                </form>
             </div>
+            <ToastContainer position="bottom-right" />
         </div>
     )
 }
